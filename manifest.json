@@ -1,0 +1,26 @@
+{
+  "name": "¡SONASTE! - Clonación de Voz con IA",
+  "short_name": "SONASTE",
+  "description": "Cloná la voz de tus personajes favoritos con IA. Escribí tu mensaje y escuchalo con la voz de Milei, Messi, Cristina y más.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#6C3CE1",
+  "theme_color": "#6C3CE1",
+  "orientation": "portrait",
+  "categories": ["entertainment", "music", "productivity"],
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
