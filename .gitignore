@@ -1,0 +1,126 @@
+# ============================================
+# DEPENDENCIAS
+# ============================================
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================
+# VARIABLES DE ENTORNO (NUNCA SUBIR A GIT)
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+
+# ============================================
+# LOGS
+# ============================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================
+# VERCEL
+# ============================================
+.vercel/
+out/
+dist/
+build/
+.vercel_cache/
+
+# ============================================
+# ARCHIVOS DEL SISTEMA
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# EDITORES DE CÓDIGO
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.~lock.*
+*.iml
+.project
+.classpath
+.settings/
+
+# ============================================
+# ARCHIVOS TEMPORALES
+# ============================================
+*.tmp
+*.temp
+*.cache
+*.log
+*.bak
+*.backup
+
+# ============================================
+# ARCHIVOS DE PROYECTO
+# ============================================
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# ============================================
+# ARCHIVOS DE TESTS
+# ============================================
+coverage/
+.nyc_output/
+*.test.js
+*.spec.js
+
+# ============================================
+# OTROS
+# ============================================
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# ============================================
+# ARCHIVOS DE BUILD
+# ============================================
+*.min.js
+*.min.css
+*.bundle.js
+*.chunk.js
+
+# ============================================
+# ARCHIVOS DE DATOS
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+*.mdb
+*.accdb
+
+# ============================================
+# ARCHIVOS DE COMPRESIÓN
+# ============================================
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.tgz
+*.bz2

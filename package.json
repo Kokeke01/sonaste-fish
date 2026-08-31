@@ -1,0 +1,22 @@
+{
+  "name": "sonaste-app",
+  "version": "1.0.0",
+  "description": "Clonación de voz con IA - ¡SONASTE!",
+  "type": "module",
+  "main": "api/tts.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "vercel build",
+    "start": "vercel start",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "node-cache": "^5.1.2"
+  },
+  "devDependencies": {
+    "vercel": "^34.2.0"
+  },
+  "keywords": ["tts", "text-to-speech", "voice-cloning", "fish-audio", "pwa"],
+  "author": "SONASTE",
+  "license": "MIT"
+}
