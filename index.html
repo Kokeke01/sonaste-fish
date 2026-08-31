@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¡SONASTE! - Clonación de Voz con IA</title>
+    
+    <meta name="description" content="Cloná la voz de tus personajes favoritos con IA." />
+    <meta name="author" content="SONASTE" />
+    <link rel="canonical" href="https://sonaste-fish.vercel.app" />
+    
+    <meta property="og:title" content="¡SONASTE! - Clonación de Voz con IA" />
+    <meta property="og:description" content="Escribí tu mensaje y escuchalo con la voz de tus personajes favoritos." />
+    <meta property="og:url" content="https://sonaste-fish.vercel.app" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6C3CE1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --primary: #6C3CE1;
+            --primary-dark: #4A1F9E;
+            --dark: #0D0D0D;
+            --gold: #FFD700;
+            --text-light: #F9FAFB;
+            --text-dark: #333333;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-hover: 0 8px 30px rgba(108,60,225,0.3);
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--text-light);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease;
+        }
+        .promo-banner {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53, #FFC107);
+            color: #fff;
+            text-align: center;
+            padding: 12px;
+            font-weight: 800;
+            font-size: clamp(12px, 1.5vw, 18px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .promo-banner .gratis {
+            background: #ff0000;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin-right: 8px;
+            animation: pulse 1s infinite;
+            display: inline-block;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .contenedor-milei {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: var(--dark);
+            padding: 15px 20px;
+            border-bottom: 4px solid var(--primary);
+            flex-wrap: wrap;
+        }
+        .titulo-titilante {
+            font-style: italic;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 0;
+            animation: titilar 1s infinite;
+            text-shadow: 0 0 30px rgba(108, 60, 225, 0.3);
+        }
+        @keyframes titilar {
+            0% { color: #ff0000; }
+            25% { color: #00ff00; }
+            50% { color: #ffff00; }
+            75% { color: #00ffff; }
+            100% { color: #ff0000; }
+        }
+        .foto-milei {
+            height: clamp(2.5rem, 5vw, 4rem);
+            width: auto;
+            border-radius: 8px;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 30px rgba(108, 60, 225, 0.5);
+            transition: var(--transition);
+        }
+        .foto-milei:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+        header {
+            background: linear-gradient(135deg, var(--dark), #1A1A2E);
+            border-bottom: 4px solid var(--primary);
+            text-align: center;
+            padding: 10px 15px;
+        }
+        .header-frase-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .frase-texto {
+            color: var(--gold) !important;
+            font-size: clamp(14px, 1.5vw, 20px) !important;
+            font-weight: 800;
+            letter-spacing: 2px;
+            animation: parpadear-frase 1s infinite;
+        }
+        @keyframes parpadear-frase {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .contenedor {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            width: 100%;
+        }
+        .tarjeta {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 60, 225, 0.1);
+        }
+        .frase {
+            font-size: clamp(22px, 3.5vw, 32px);
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.4;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fecha { color: #999; font-size: 13px; margin-top: 10px; }
+        .boton-audio {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: 0;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(108, 60, 225, 0.3);
+        }
+        .boton-audio:hover { transform: scale(1.05); }
+        .botones-compartir { 
+            margin-top: 15px; 
+            display: flex; 
+            gap: 10px; 
+            justify-content: center; 
+            flex-wrap: wrap; 
+        }
+        .boton-compartir {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+        .boton-compartir:hover { transform: scale(1.05); }
+        .boton-compartir.whatsapp { background: #25D366; }
+        .pedido {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 25px;
+        }
+        .campo { margin-bottom: 18px; }
+        .campo label { 
+            display: block; 
+            font-weight: 700; 
+            font-size: 17px; 
+            color: var(--text-dark); 
+            margin-bottom: 8px; 
+        }
+        .campo textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 90px;
+            background: #fafafa;
+        }
+        .campo textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 60, 225, 0.1);
+        }
+        .contador-palabras {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+            transition: var(--transition);
+        }
+        .contador-palabras.cerca-limite { color: #FFC107; }
+        .contador-palabras.limite-alcanzado { color: #FF6B6B; font-weight: 700; }
+        .botones-accion {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        .boton-generar {
+            background: linear-gradient(135deg, #6C3CE1, #4A1F9E);
+            color: white;
+            border: 0;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(108, 60, 225, 0.3);
+            flex: 1;
+            min-width: 140px;
+        }
+        .boton-generar:hover { transform: scale(1.05); }
+        .boton-generar:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .boton-descargar-msg {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: 0;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            flex: 1;
+            min-width: 140px;
+        }
+        .boton-descargar-msg:hover { transform: scale(1.05); }
+        .boton-descargar-msg:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .alerta-texto {
+            background: #FFF3CD;
+            border: 1px solid #FFC107;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+            text-align: center;
+            color: #856404;
+            font-size: 14px;
+        }
+        .galeria-titulo { font-size: 20px; font-weight: 800; color: var(--text-dark); margin: 20px 0 5px; }
+        .galeria-subtitulo { text-align: center; color: #777; margin-bottom: 12px; font-size: 13px; }
+        .personajes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .personaje {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            text-align: center;
+            background: white;
+            transition: var(--transition);
+            position: relative;
+        }
+        .personaje:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+        .personaje.seleccionado {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary), var(--shadow-hover);
+            transform: scale(1.05);
+        }
+        .personaje .avatar {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6C3CE1, #4A1F9E);
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+        }
+        .personaje-nombre { font-size: 12px; font-weight: 700; padding: 8px 4px; color: var(--text-dark); background: white; border-top: 1px solid #f0f0f0; }
+        .personaje .badge-ia {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(108, 60, 225, 0.9);
+            color: white;
+            font-size: 7px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+        .seleccionado-info {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f0ff, #f0e6ff);
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            display: none;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .seleccionado-info .personaje-elegido {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .seleccionado-info .personaje-elegido .avatar-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6C3CE1, #4A1F9E);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            border: 3px solid var(--primary);
+        }
+        .seleccionado-info .personaje-elegido strong { font-size: 18px; color: var(--primary); }
+        .estado-cargando { color: #FFC107; font-weight: 600; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .estado-cargando .spinner { width: 22px; height: 22px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .estado-exito { color: #4CAF50; font-weight: 600; margin-top: 10px; }
+        .estado-error { color: #FF6B6B; font-weight: 600; margin-top: 10px; }
+        .audio-container { margin-top: 18px; display: none; }
+        .audio-container audio { width: 100%; max-width: 380px; border-radius: 8px; }
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+            width: 100%;
+        }
+        .toast {
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: slideInRight 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .toast-success { background: rgba(76, 175, 80, 0.95); }
+        .toast-error { background: rgba(255, 107, 107, 0.95); }
+        .toast-info { background: rgba(108, 60, 225, 0.95); }
+        .toast-warning { background: rgba(255, 193, 7, 0.95); }
+        .toast .toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .toast .toast-close:hover { opacity: 1; }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: var(--shadow-hover);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dark-mode-toggle:hover { transform: scale(1.1); }
+        body.dark-mode { background: #1a1a2e; }
+        body.dark-mode .tarjeta, body.dark-mode .pedido { background: #2a2a3e; }
+        body.dark-mode .tarjeta .frase { color: #e0e0e0; }
+        body.dark-mode .campo textarea { background: #3a3a4e; color: #e0e0e0; border-color: #4a4a5e; }
+        body.dark-mode .personaje { background: #2a2a3e; border-color: #4a4a5e; }
+        body.dark-mode .personaje-nombre { background: #2a2a3e; color: #e0e0e0; border-color: #4a4a5e; }
+        body.dark-mode .seleccionado-info { background: linear-gradient(135deg, #2a1a3e, #1a1a2e); }
+        body.dark-mode .alerta-texto { background: #3a2a1e; color: #ffd700; border-color: #ffd700; }
+        body.dark-mode .dark-mode-toggle { background: var(--gold); color: var(--dark); }
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: var(--dark);
+            color: #666;
+            margin-top: auto;
+            border-top: 2px solid var(--primary);
+            font-size: 14px;
+        }
+        footer span { color: #8B6BE8; }
+        footer .estadisticas { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; margin-bottom: 8px; font-size: 13px; }
+        footer .estadisticas span { color: #8B6BE8; font-weight: 700; }
+        @media (max-width: 768px) {
+            .personajes { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+            .personaje .avatar { height: 60px; font-size: 20px; }
+            .pedido, .tarjeta { padding: 18px; }
+            .botones-accion { flex-direction: column; }
+            .boton-generar, .boton-descargar-msg { min-width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .personajes { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; }
+            .personaje .avatar { height: 50px; font-size: 16px; }
+            .personaje-nombre { font-size: 10px; padding: 4px 2px; }
+            .frase { font-size: 20px; }
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Cambiar tema">🌙</button>
+    <audio id="audioSonaste" preload="none"></audio>
+
+    <div class="promo-banner">
+        <span class="gratis">🔥</span> 
+        ¡¡POR AHORA GRATIS!! 🎙️ ¡Cloná la voz de tus personajes favoritos! &nbsp;|&nbsp; 💬 Probá con tu propio mensaje
+    </div>
+
+    <div class="contenedor-milei">
+        <h1 class="titulo-titilante">¡Sonaste!</h1>
+        <img src="https://ui-avatars.com/api/?name=Milei&background=6C3CE1&color=fff&size=128" alt="Milei" class="foto-milei" loading="lazy">
+    </div>
+
+    <header>
+        <div class="header-frase-container">
+            <span class="frase-texto">🎤 La Voz de los Famosos</span>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <section class="tarjeta">
+            <div class="frase" id="frase">Cargando...</div>
+            <button class="boton-audio" id="botonAudio">🔊 LA FRASE DE AHORA</button>
+            <div class="fecha" id="fecha"></div>
+            <div class="botones-compartir">
+                <button class="boton-compartir whatsapp" id="compartirWhatsapp">💬 WhatsApp</button>
+            </div>
+        </section>
+
+        <section class="titulo-seccion" style="text-align:center;margin:25px 0 15px;">
+            <h2 style="font-size:clamp(22px,3vw,28px);color:#6C3CE1;margin-bottom:8px;">🎤 Escribí tu mensaje y elegí a tu personaje</h2>
+            <p style="color:#666;font-size:clamp(14px,1.5vw,16px);">Escribí lo que quieras que diga el personaje y hacé clic en él para escuchar su voz clonada.</p>
+            <p style="font-size:12px;color:#999;margin-top:4px;">💡 Atajo: <kbd style="background:#eee;padding:2px 8px;border-radius:4px;font-family:monospace;">Ctrl+Enter</kbd> o <kbd style="background:#eee;padding:2px 8px;border-radius:4px;font-family:monospace;">⌘+Enter</kbd></p>
+        </section>
+
+        <div class="pedido">
+            <div class="campo">
+                <label for="textoPedido"><strong>Tu mensaje (máximo 50 palabras)</strong></label>
+                <textarea id="textoPedido" maxlength="2000" placeholder="Escribí lo que quieras que diga. Ej: Hola Juan, feliz cumpleaños, te desea toda la familia..."></textarea>
+                <div class="contador-palabras" id="contadorPalabras">
+                    <span id="palabrasUsadas">0</span> / 50 palabras
+                </div>
+            </div>
+
+            <div class="botones-accion">
+                <button class="boton-generar" id="botonGenerar">🎤 Generar</button>
+                <button class="boton-descargar-msg" id="botonDescargarMsg" disabled>📥 Descargar mensaje</button>
+            </div>
+
+            <div class="alerta-texto">⚠️ Cuando elijas un personaje, <strong>se leerá tu mensaje con su voz clonada</strong>.</div>
+
+            <div class="galeria-titulo">👥 Elegí tu personaje</div>
+            <div class="galeria-subtitulo">👆 Clic sobre el personaje para escuchar su voz</div>
+
+            <div class="personajes" id="personajes">Cargando...</div>
+
+            <div class="seleccionado-info" id="seleccionadoInfo">
+                <div class="personaje-elegido">
+                    <div class="avatar-circle" id="personajeAvatar">T</div>
+                    <div>🎯 Personaje elegido: <strong id="nombreSeleccionado"></strong></div>
+                </div>
+                <div id="estadoAudio" class="estado-cargando" style="display:none;">
+                    <span class="spinner"></span> ⏳ Generando voz clonada...
+                </div>
+                <div class="audio-container" id="audioPlayerContainer">
+                    <audio id="audioPlayer" controls></audio>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="estadisticas">
+            <span>🎙️ <span id="contadorTotal">0</span> frases generadas</span>
+            <span>👥 <span id="contadorPersonajes">0</span> personajes</span>
+        </div>
+        <div>¡SONASTE! 🎙️ <span>© 2026</span> &nbsp;·&nbsp; Clonación de voz con IA</div>
+    </footer>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        
+        const URL_AUDIO_DIA = "https://res.cloudinary.com/zmmel6il/video/upload/v1787860312/carlos_menem.mp3";
+        const DATOS_DIA = { frase: "¡¡NOTICIAS hechas VOZ!!", fecha: new Date() };
+        const MAX_PALABRAS = 50;
+        let totalFrasesGeneradas = parseInt(localStorage.getItem('totalFrasesGeneradas') || '0');
+
+        // ============================================
+        // MODELOS DE FISH AUDIO - TODOS LOS PERSONAJES CON IDs CORRECTOS
+        // ============================================
+        
+        const MODELOS_FISH = {
+            "Messi": "9d0d73382202428aac79b9920b8ce38f",
+            "Tato Bores": "12868a12da7049769a9dc117b270a1c3",
+            "Cristina": "ddaa863490c54c32ab4223b3cd94d5c2",
+            "Perón": "cb5cf78b7fcf4059b22ce8ea69207940",
+            "Borges": "0c9b421b3caa4ae7b522abc44541bad8",
+            "Baby Echecopar": "fd03823ad375417688a6375c2d107634",
+            "Gato Sylvestre": "17241bbceb7f40f5996a807aedd41a43",
+            "Toto Caputo": "a11ba01db9da4d9b8451d7ca08c23b6c",
+            "Feinman": "77adbc783bc442bcb9c2c4d7e3b356c9",
+            "Novaresio": "b59eb7fe6eda4c5398d8fee6d8570c82",
+            "Grabois": "bb19d02c204a4481a479cd84271ff3d3",
+            "Sturzenegger": "500f2add6ae84821ab266ea5a520005b",
+            "Joni Viale": "4346fb5c3a314b579b8ef3788a371767",
+            "Patricia Bullrich": "78aee98fe453458ab7734a66417be7a8",
+            "Raúl Alfonsín": "b9e3d473adb54a9d8bdc4331822d4818",
+            "Canosa": "81fb776a4432488db05f63c0698e211f",
+            "Espert": "802073bf389644049b84beec49d031e3",
+            "Gardel": "6142dd4d835e43ce9351a81a17ebf6dc",
+            "Mirta Legrand": "ab578f02ebbf431d99b8a66de4263751",
+            "Evita": "0c404c5f3a444497ab284c1bb9f0aa04",
+            "Tini Stoessel": "ff0780b5e76b42e18157092c802516d4",
+            "María Becerra": "9156f449e4144fe19f1066eb242aa3c6",
+            "Lali Espósito": "e787d3f102814b95b4235f9b33b98938",
+            "Ernesto Tenembaum": "527ae71becdb4140893c748505e3184b",
+            "Alejandro Bercovich": "a2695244f395425d9d28ec9bd3b3b234",
+            "Homero Simpson": "f08341ef649341da961bfaebce835a3f",
+            "Luis Miguel": "d388e8cabb5b4966957a35a75f856a63",
+            "Milo J": "23bfbda5cbe245cbaaf983e73fbb7dbd"
+        };
+
+        const PERSONAJES_LISTA = Object.keys(MODELOS_FISH);
+
+        // ============================================
+        // FUNCIONES AUXILIARES
+        // ============================================
+
+        function getInitials(nombre) {
+            return nombre.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        function contarPalabras(texto) {
+            const palabras = texto.trim().split(/\s+/);
+            return palabras.length === 1 && palabras[0] === '' ? 0 : palabras.length;
+        }
+
+        // ============================================
+        // ESTADO GLOBAL
+        // ============================================
+
+        const state = {
+            selectedCharacter: null,
+            isGenerating: false,
+            audioBlob: null,
+            audioUrl: null,
+        };
+
+        // ============================================
+        // TOAST NOTIFICATIONS
+        // ============================================
+
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+                <span>${message}</span>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), duration);
+        }
+
+        // ============================================
+        // DARK MODE
+        // ============================================
+
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').textContent = '☀️';
+        }
+
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            this.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+        });
+
+        // ============================================
+        // CONTADOR DE PALABRAS
+        // ============================================
+
+        document.getElementById('textoPedido').addEventListener('input', function() {
+            const texto = this.value;
+            const palabras = contarPalabras(texto);
+            const contenedor = document.getElementById('contadorPalabras');
+            const span = document.getElementById('palabrasUsadas');
+            
+            span.textContent = palabras;
+            
+            contenedor.classList.remove('cerca-limite', 'limite-alcanzado');
+            if (palabras > MAX_PALABRAS * 0.8) {
+                contenedor.classList.add('cerca-limite');
+            }
+            if (palabras >= MAX_PALABRAS) {
+                contenedor.classList.add('limite-alcanzado');
+            }
+        });
+
+        // ============================================
+        // CARGAR DATOS DEL DÍA
+        // ============================================
+
+        function cargarDatosDelDia() {
+            document.getElementById('frase').textContent = DATOS_DIA.frase;
+            document.getElementById('audioSonaste').src = URL_AUDIO_DIA;
+            actualizarFechaHora();
+        }
+
+        function actualizarFechaHora() {
+            function actualizar() {
+                const ahora = new Date();
+                document.getElementById('fecha').textContent = 
+                    ahora.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }) +
+                    ' · ' + ahora.toLocaleTimeString('es-AR');
+            }
+            actualizar();
+            setInterval(actualizar, 1000);
+        }
+
+        // ============================================
+        // REPRODUCIR AUDIO DEL DÍA
+        // ============================================
+
+        document.getElementById('botonAudio').addEventListener('click', function() {
+            const audio = document.getElementById('audioSonaste');
+            if (audio.src) {
+                audio.play().catch(() => showToast('No se pudo reproducir el audio.', 'error'));
+            } else {
+                showToast('El audio no está disponible.', 'error');
+            }
+        });
+
+        // ============================================
+        // GENERAR AUDIO CON FISH AUDIO
+        // ============================================
+
+        async function generarAudio() {
+            const personaje = state.selectedCharacter;
+            const texto = document.getElementById('textoPedido').value.trim();
+            
+            if (!personaje) {
+                showToast('👆 Primero seleccioná un personaje.', 'warning');
+                return;
+            }
+
+            if (!texto) {
+                showToast('✏️ Primero escribí tu mensaje.', 'error');
+                return;
+            }
+
+            const palabras = contarPalabras(texto);
+            if (palabras > MAX_PALABRAS) {
+                showToast(`⚠️ El mensaje tiene ${palabras} palabras. Máximo ${MAX_PALABRAS}.`, 'warning');
+                return;
+            }
+
+            if (state.isGenerating) {
+                showToast('⏳ Ya se está generando un audio.', 'info');
+                return;
+            }
+
+            const modelId = MODELOS_FISH[personaje];
+            const estadoElement = document.getElementById('estadoAudio');
+            const reproductor = document.getElementById('audioPlayerContainer');
+            const audioElement = document.getElementById('audioPlayer');
+            const botonGenerar = document.getElementById('botonGenerar');
+            const botonDescargar = document.getElementById('botonDescargarMsg');
+
+            state.isGenerating = true;
+            botonGenerar.disabled = true;
+            botonGenerar.textContent = '⏳ Generando...';
+            botonDescargar.disabled = true;
+            
+            estadoElement.style.display = 'flex';
+            estadoElement.className = 'estado-cargando';
+            estadoElement.innerHTML = `<span class="spinner"></span> ⏳ Generando voz clonada...`;
+            reproductor.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/tts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: texto, modelId: modelId })
+                });
+
+                if (!response.ok) {
+                    let errorMsg = `Error ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.error || errorMsg;
+                    } catch {
+                        const textError = await response.text();
+                        if (textError) errorMsg = textError.substring(0, 200);
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                const audioBlob = await response.blob();
+                if (audioBlob.size === 0) throw new Error('El audio generado está vacío');
+
+                state.audioBlob = audioBlob;
+                const audioUrl = URL.createObjectURL(audioBlob);
+                state.audioUrl = audioUrl;
+                
+                audioElement.src = audioUrl;
+                reproductor.style.display = 'block';
+
+                estadoElement.className = 'estado-exito';
+                estadoElement.innerHTML = '✅ ¡Voz clonada generada exitosamente!';
+
+                botonDescargar.disabled = false;
+                botonGenerar.textContent = '🎤 Generar';
+
+                totalFrasesGeneradas++;
+                localStorage.setItem('totalFrasesGeneradas', totalFrasesGeneradas.toString());
+                document.getElementById('contadorTotal').textContent = totalFrasesGeneradas;
+
+                showToast(`✅ ¡Voz de ${personaje} generada!`, 'success');
+
+                try {
+                    await audioElement.play();
+                } catch {
+                    console.log('Auto-play bloqueado');
+                }
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                estadoElement.className = 'estado-error';
+                estadoElement.innerHTML = `❌ ${error.message}`;
+                reproductor.style.display = 'none';
+                botonGenerar.textContent = '🎤 Generar';
+                showToast(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                state.isGenerating = false;
+                botonGenerar.disabled = false;
+            }
+        }
+
+        // ============================================
+        // DESCARGAR MENSAJE
+        // ============================================
+
+        function descargarAudio() {
+            if (!state.audioBlob) {
+                showToast('❌ No hay audio para descargar. Generá uno primero.', 'error');
+                return;
+            }
+            
+            const nombre = state.selectedCharacter || 'voz';
+            const url = URL.createObjectURL(state.audioBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sonaste-${nombre}-${Date.now()}.mp3`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            showToast(`📥 Descargando mensaje de ${nombre}...`, 'success');
+        }
+
+        // ============================================
+        // EVENTOS DE LOS BOTONES
+        // ============================================
+
+        document.getElementById('botonGenerar').addEventListener('click', generarAudio);
+        document.getElementById('botonDescargarMsg').addEventListener('click', descargarAudio);
+
+        // ============================================
+        // SELECCIONAR PERSONAJE
+        // ============================================
+
+        function seleccionarPersonaje(personaje, tarjeta) {
+            document.querySelectorAll('.personaje').forEach(el => el.classList.remove('seleccionado'));
+            tarjeta.classList.add('seleccionado');
+            state.selectedCharacter = personaje;
+
+            document.getElementById('personajeAvatar').textContent = getInitials(personaje);
+            document.getElementById('nombreSeleccionado').textContent = personaje;
+            document.getElementById('seleccionadoInfo').style.display = 'block';
+            
+            // Resetear botón de descarga
+            document.getElementById('botonDescargarMsg').disabled = true;
+            
+            showToast(`✅ Personaje seleccionado: ${personaje}. Ahora hacé clic en "Generar".`, 'success');
+        }
+
+        // ============================================
+        // CARGAR PERSONAJES
+        // ============================================
+
+        function cargarPersonajes() {
+            const contenedor = document.getElementById('personajes');
+            contenedor.innerHTML = '';
+
+            PERSONAJES_LISTA.forEach(nombre => {
+                const tarjeta = document.createElement('div');
+                tarjeta.className = 'personaje';
+                tarjeta.setAttribute('tabindex', '0');
+
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                avatarDiv.textContent = getInitials(nombre);
+
+                const nombreDiv = document.createElement('div');
+                nombreDiv.className = 'personaje-nombre';
+                nombreDiv.textContent = nombre;
+
+                const badge = document.createElement('span');
+                badge.className = 'badge-ia';
+                badge.textContent = '🤖 IA';
+
+                tarjeta.appendChild(avatarDiv);
+                tarjeta.appendChild(nombreDiv);
+                tarjeta.appendChild(badge);
+
+                tarjeta.addEventListener('click', () => seleccionarPersonaje(nombre, tarjeta));
+                tarjeta.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        seleccionarPersonaje(nombre, tarjeta);
+                    }
+                });
+
+                contenedor.appendChild(tarjeta);
+            });
+
+            document.getElementById('contadorPersonajes').textContent = PERSONAJES_LISTA.length;
+            console.log(`✅ ${PERSONAJES_LISTA.length} personajes cargados`);
+        }
+
+        // ============================================
+        // COMPARTIR
+        // ============================================
+
+        document.getElementById('compartirWhatsapp').addEventListener('click', function() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('🎙️ ¡Mirá esta app de clonación de voz!');
+            window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+        });
+
+        // ============================================
+        // ATALO DE TECLADO
+        // ============================================
+
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (state.selectedCharacter) {
+                    generarAudio();
+                } else {
+                    showToast('👆 Primero seleccioná un personaje.', 'warning');
+                }
+            }
+        });
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarDatosDelDia();
+            cargarPersonajes();
+            document.getElementById('contadorTotal').textContent = totalFrasesGeneradas;
+            
+            console.log('🎙️ ¡SONASTE! - Clonación de voz con IA');
+            console.log(`📋 ${PERSONAJES_LISTA.length} personajes disponibles`);
+            console.log('⌨️ Atajo: Ctrl+Enter o ⌘+Enter para generar');
+        });
+    </script>
+</body>
+</html>
